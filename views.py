@@ -158,3 +158,74 @@ class ClienteController:
             "dominios": sorted(dominios),
             "sin_telefono": sin_telefono,
         }
+        
+
+from models import Estudiante
+from shared.json_manager import GestorJSON
+from views import ClienteController
+
+
+class EstudianteController(ClienteController):
+    """Hereda las 5 operaciones. Solo cambia la configuración."""
+
+    MODELO = Estudiante
+    ARCHIVO = "data/estudiantes.json"
+    CAMPOS_BUSCABLES = ("nombre", "apellido", "email", "carnet")
+    _gestor = GestorJSON(ARCHIVO)      # cada controlador necesita SU propio gestor
+
+    # --- lo que sí es propio de estudiantes ---
+    
+    @classmethod
+    def carnets_registrados(cls, excepto_id=None):
+        return {
+            registro["carnet"].upper()
+            for registro in cls._registros()
+            if registro["id"] != excepto_id
+        }
+
+    @classmethod
+    def crear(cls, datos):
+        carnet = str(datos.get("carnet", "")).strip().upper()
+        if carnet and carnet in cls.carnets_registrados():
+            return False, "Ese carnet ya está registrado"
+        return super().crear(datos)    
+    
+    @classmethod
+    def actualizar(cls, id_registro, cambios):
+        if "carnet" in cambios:
+            nuevo = str(cambios["carnet"]).strip().upper()
+            if nuevo in cls.carnets_registrados(excepto_id=id_registro):
+                return False, "Ese carnet ya lo usa otro estudiante"
+        return super().actualizar(id_registro, cambios)
+
+    @classmethod
+    def _guardar_objeto(cls, objeto):
+        registros = cls._registros()
+        for indice, registro in enumerate(registros):
+            if registro["id"] == objeto.id:
+                registros[indice] = objeto.a_diccionario()
+                break
+        return cls._gestor.guardar(registros)
+
+    @classmethod
+    def agregar_nota(cls, id_estudiante, materia, nota):
+        objeto = cls.obtener(id_estudiante)
+        if objeto is None:
+            return False, f"No existe un estudiante con id {id_estudiante}"
+        try:
+            # La regla 0-20 la aplica el MODELO (es_nota_valida)
+            objeto.agregar_nota(materia, nota)
+        except ValueError as error:
+            return False, str(error)
+        if not cls._guardar_objeto(objeto):
+            return False, "No se pudo escribir el archivo"
+        return True, f"Nota {nota} agregada a {objeto.nombre_completo}"
+    
+    
+    @classmethod
+    def materias_ofertadas(cls):
+        todas = set()
+        
+        for estudiante in cls.listar:
+            todas |= estudiante.materias
+        return todas
