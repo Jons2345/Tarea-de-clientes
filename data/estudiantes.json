@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "nombre": "Joel",
+    "apellido": "Lino",
+    "email": "jaja@gmail.com",
+    "carnet": "12345",
+    "notas": {
+      "Fisica": [
+        10.0
+      ]
+    },
+    "materias": [
+      "Fisica"
+    ]
+  }
+]

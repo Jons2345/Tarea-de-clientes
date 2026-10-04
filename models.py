@@ -234,6 +234,10 @@ class Estudiante:
             todas.extend(lista_notas)
         return round(sum(todas) / len(todas), 2) if todas else 0
 
+    @property
+    def estado(self):
+        return "Aprobado" if self.promedio >= 14 else "Reprobado"
+
     # ===== MÉTODOS DE INSTANCIA =====
     def inscribir_materia(self, materia):
         materia = Estudiante.limpiar(materia).title()
