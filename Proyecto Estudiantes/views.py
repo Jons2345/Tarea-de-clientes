@@ -148,8 +148,7 @@ class ClienteController:
 
 
 class EstudianteController(ClienteController):
-    """Hereda las 5 operaciones. Solo cambia la configuración."""
-
+    
     MODELO = Estudiante
     ARCHIVO = "data/estudiantes.json"
     CAMPOS_BUSCABLES = ("nombre", "apellido", "email", "carnet")
@@ -203,7 +202,6 @@ class EstudianteController(ClienteController):
     
     @classmethod
     def materias_ofertadas(cls):
-        """CONJUNTO con todas las materias, sin repetir."""
         todas = set()
         for estudiante in cls.listar():
             todas |= estudiante.materias      
