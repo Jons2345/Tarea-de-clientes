@@ -206,7 +206,6 @@ class Estudiante:
 
     @property
     def materias(self):
-        # Devolvemos una COPIA: así nadie modifica el conjunto interno desde afuera
         return set(self.__materias)
 
     @property
@@ -215,7 +214,6 @@ class Estudiante:
 
     @property
     def promedio(self):
-        # CALCULADA: recorre el diccionario de listas cada vez que se lee
         todas = []
         for lista_notas in self.__notas.values():
             todas.extend(lista_notas)

@@ -256,8 +256,6 @@ class MenuEstudiantes(MenuClientes):
 
 if __name__ == "__main__":
     try:
-        menus = {"1": MenuClientes, "2": MenuEstudiantes}
-        eleccion = input("1. Clientes\n2. Estudiantes\nSeleccione un sistema: ").strip()
-        menus.get(eleccion, MenuClientes)().ejecutar()
+        MenuClientes().ejecutar()
     except KeyboardInterrupt:
         print("\nPrograma interrumpido por el usuario.")

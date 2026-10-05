@@ -89,11 +89,9 @@ class ClienteController:
             if cls._coincide(registro, termino, cls.CAMPOS_BUSCABLES)
         ]
 
-    # ===== U · UPDATE =====
     @classmethod
     def actualizar(cls, id_registro, cambios):
         try:
-            # DIFERENCIA DE CONJUNTOS: ¿mandaron campos que no existen?
             desconocidos = set(cambios) - set(cls.MODELO.CAMPOS)
             if desconocidos:
                 return False, f"Campos no válidos: {', '.join(sorted(desconocidos))}"
@@ -109,7 +107,6 @@ class ClienteController:
                 if nuevo in cls.emails_registrados(excepto_id=id_registro):
                     return False, "Ese email ya lo usa otro registro"
 
-            # setattr le asigna a la PROPIEDAD, así que cada setter valida el valor
             for campo, valor in cambios.items():
                 setattr(objeto, campo, valor)
 
@@ -125,11 +122,9 @@ class ClienteController:
         except ValueError as error:
             return False, str(error)
 
-    # ===== D · DELETE =====
     @classmethod
     def eliminar(cls, id_registro):
         registros = cls._registros()
-        # Lista nueva sin ese registro: nunca se borra mientras se recorre
         quedan = [r for r in registros if r["id"] != id_registro]
 
         if len(quedan) == len(registros):
@@ -138,7 +133,6 @@ class ClienteController:
         cls._gestor.guardar(quedan)
         return True, f"Registro {id_registro} eliminado"
 
-    # ===== EXTRA =====
     @classmethod
     def estadisticas(cls):
         registros = cls._registros()
@@ -159,9 +153,8 @@ class EstudianteController(ClienteController):
     MODELO = Estudiante
     ARCHIVO = "data/estudiantes.json"
     CAMPOS_BUSCABLES = ("nombre", "apellido", "email", "carnet")
-    _gestor = GestorJSON(ARCHIVO)      # cada controlador necesita SU propio gestor
+    _gestor = GestorJSON(ARCHIVO)      
 
-    # --- lo que sí es propio de estudiantes ---
     @classmethod
     def carnets_registrados(cls, excepto_id=None):
         return {
