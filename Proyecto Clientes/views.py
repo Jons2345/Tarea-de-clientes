@@ -5,13 +5,11 @@ from shared.json_manager import GestorJSON
 class ClienteController:
     """CONTROLADOR: las cinco operaciones. No imprime ni pide datos."""
 
-    # ===== ATRIBUTOS DE CLASE: toda la configuración junta =====
     MODELO = Cliente
     ARCHIVO = "data/clientes.json"
     CAMPOS_BUSCABLES = ("nombre", "apellido", "email", "telefono", "ciudad")
-    _gestor = GestorJSON(ARCHIVO)        # se crea una sola vez, al importar el módulo
+    _gestor = GestorJSON(ARCHIVO)       
 
-    # ===== AYUDAS =====
     @classmethod
     def _registros(cls):
         """LISTA de diccionarios, tal como está en el archivo."""
@@ -39,7 +37,6 @@ class ClienteController:
                 return True
         return False
 
-    # ===== C · CREATE =====
     @classmethod
     def crear(cls, datos):
         """datos: diccionario. Devuelve la TUPLA (exito, mensaje)."""
@@ -57,7 +54,6 @@ class ClienteController:
 
             valores = {campo: datos.get(campo, "") for campo in cls.MODELO.CAMPOS}
 
-            # cls.MODELO es la clase: aquí nace el objeto y sus setters validan todo
             objeto = cls.MODELO(cls.siguiente_id(), **valores)
 
             registros = cls._registros()
@@ -68,10 +64,8 @@ class ClienteController:
             return True, f"{objeto.nombre_completo} creado con id {objeto.id}"
 
         except ValueError as error:
-            # Los setters del Modelo lanzan ValueError con el mensaje ya listo
             return False, str(error)
 
-    # ===== R · READ =====
     @classmethod
     def listar(cls):
         """LISTA de objetos del Modelo."""
@@ -84,7 +78,6 @@ class ClienteController:
                 return objeto
         return None
 
-    # ===== S · SEARCH =====
     @classmethod
     def buscar(cls, termino):
         termino = str(termino).strip().lower()
@@ -220,7 +213,7 @@ class EstudianteController(ClienteController):
         """CONJUNTO con todas las materias, sin repetir."""
         todas = set()
         for estudiante in cls.listar():
-            todas |= estudiante.materias      # UNIÓN
+            todas |= estudiante.materias      
         return todas
 
     @classmethod
@@ -229,4 +222,4 @@ class EstudianteController(ClienteController):
         b = cls.obtener(id_b)
         if a is None or b is None:
             return False, "Uno de los dos estudiantes no existe"
-        return True, a.materias_en_comun(b)   # INTERSECCIÓN del Modelo
+        return True, a.materias_en_comun(b)  

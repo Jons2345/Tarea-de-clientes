@@ -1,24 +1,21 @@
 class Cliente:
     """MODELO: un cliente válido. Si los datos están mal, el objeto no se crea."""
 
-    # ===== ATRIBUTOS DE CLASE (estáticos): existen una sola vez =====
     CAMPOS = ("nombre", "apellido", "email", "telefono", "ciudad", "direccion")
     OBLIGATORIOS = ("nombre", "apellido", "email")
     total_creados = 0
 
     def __init__(self, id_cliente, nombre, apellido, email,
                  telefono="", ciudad="", direccion=""):
-        self.__id = id_cliente        # privado y sin setter: no se puede cambiar
-        # Asignamos por las PROPIEDADES para que la validación corra también al crear
+        self.__id = id_cliente        
         self.nombre = nombre
         self.apellido = apellido
         self.email = email
         self.telefono = telefono
         self.ciudad = ciudad
         self.direccion = direccion
-        Cliente.total_creados += 1    # el contador vive en la CLASE, no en el objeto
+        Cliente.total_creados += 1    
 
-    # ===== MÉTODOS ESTÁTICOS: reglas que no dependen de ningún cliente =====
     @staticmethod
     def limpiar(texto):
         return str(texto).strip()
@@ -31,10 +28,8 @@ class Cliente:
         usuario, dominio = texto.split("@")
         return len(usuario) > 0 and "." in dominio and not dominio.endswith(".")
 
-    # ===== PROPIEDADES =====
     @property
     def id(self):
-        # SOLO LECTURA: no tiene setter, así que cliente.id = 5 lanza AttributeError
         return self.__id
 
     @property
@@ -97,7 +92,6 @@ class Cliente:
     def direccion(self, valor):
         self.__direccion = Cliente.limpiar(valor)
 
-    # PROPIEDADES CALCULADAS: no guardan nada, se calculan al leerlas
     @property
     def nombre_completo(self):
         return f"{self.__nombre} {self.__apellido}"
@@ -106,7 +100,6 @@ class Cliente:
     def dominio_email(self):
         return self.__email.split("@")[1]
 
-    # ===== MÉTODOS DE INSTANCIA: necesitan los datos de ESTE cliente =====
     def a_diccionario(self):
         return {
             "id": self.__id,
@@ -121,11 +114,8 @@ class Cliente:
     def __str__(self):
         return f"[{self.__id}] {self.nombre_completo} - {self.__email}"
 
-    # ===== MÉTODO DE CLASE: fabrica un objeto a partir de un diccionario =====
     @classmethod
     def desde_diccionario(cls, datos):
-        # cls es la clase. Si mañana existe ClienteVIP(Cliente),
-        # ClienteVIP.desde_diccionario(d) devolverá un ClienteVIP.
         return cls(
             datos["id"],
             datos["nombre"],
@@ -153,22 +143,19 @@ class Estudiante:
         self.apellido = apellido
         self.email = email
         self.carnet = carnet
-        self.__notas = dict(notas) if notas else {}          # DICCIONARIO de LISTAS
-        self.__materias = set(materias) if materias else set()  # CONJUNTO
+        self.__notas = dict(notas) if notas else {}          
+        self.__materias = set(materias) if materias else set()  
         Estudiante.total_creados += 1
 
-    # ===== ESTÁTICOS =====
     @staticmethod
     def limpiar(texto):
         return str(texto).strip()
 
     @staticmethod
     def es_nota_valida(nota):
-        # No usa self ni cls: es una regla suelta, por eso es estático
         return isinstance(nota, (int, float)) and \
             Estudiante.NOTA_MINIMA <= nota <= Estudiante.NOTA_MAXIMA
 
-    # ===== PROPIEDADES =====
     @property
     def id(self):
         return self.__id
@@ -238,12 +225,11 @@ class Estudiante:
     def estado(self):
         return "Aprobado" if self.promedio >= 14 else "Reprobado"
 
-    # ===== MÉTODOS DE INSTANCIA =====
     def inscribir_materia(self, materia):
         materia = Estudiante.limpiar(materia).title()
         if not materia:
             raise ValueError("La materia no puede estar vacía")
-        self.__materias.add(materia)        # add() no duplica
+        self.__materias.add(materia)        
         return materia
 
     def agregar_nota(self, materia, nota):
@@ -258,7 +244,6 @@ class Estudiante:
         return list(self.__notas.get(Estudiante.limpiar(materia).title(), []))
 
     def materias_en_comun(self, otro):
-        # INTERSECCIÓN de conjuntos
         return self.__materias & otro.materias
 
     def a_diccionario(self):
@@ -269,18 +254,17 @@ class Estudiante:
             "email": self.__email,
             "carnet": self.__carnet,
             "notas": self.__notas,
-            "materias": sorted(self.__materias),   # JSON no guarda sets
+            "materias": sorted(self.__materias),   
         }
 
     def __str__(self):
         return f"[{self.__carnet}] {self.nombre_completo} - Promedio: {self.promedio}"
 
-    # ===== MÉTODO DE CLASE =====
     @classmethod
     def desde_diccionario(cls, datos):
         return cls(
             datos["id"], datos["nombre"], datos["apellido"], datos["email"],
             datos["carnet"],
             notas=datos.get("notas", {}),
-            materias=set(datos.get("materias", [])),   # lista -> conjunto otra vez
+            materias=set(datos.get("materias", [])),  
         )

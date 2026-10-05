@@ -7,14 +7,12 @@ from views import ClienteController, EstudianteController
 class MenuClientes:
     """VISTA: muestra, pide y presenta. No decide reglas del negocio."""
 
-    TITULO = "SISTEMA DE GESTIÓN DE CLIENTES"     # atributo de clase
+    TITULO = "SISTEMA DE GESTIÓN DE CLIENTES"    
     ANCHO = 85
 
     def __init__(self, controlador=ClienteController):
-        # ATRIBUTOS DE INSTANCIA: estado de ESTE menú
         self._controlador = controlador
         self._activo = True
-        # DICCIONARIO tecla -> (texto, método). Reemplaza al if/elif largo.
         self._opciones = {
             "1": ("Crear cliente", self.crear),
             "2": ("Ver todos", self.listar),
@@ -26,7 +24,6 @@ class MenuClientes:
             "0": ("Salir", self.salir),
         }
 
-    # ===== ESTÁTICOS: utilidades de pantalla, no dependen del menú =====
     @staticmethod
     def pausa():
         input("\nPresione Enter para continuar...")
@@ -46,7 +43,6 @@ class MenuClientes:
         else:
             imprimir_error(mensaje)
 
-    # ===== MÉTODOS DE INSTANCIA =====
     def mostrar_tabla(self, clientes):
         print(f"{'ID':<5}{'NOMBRE':<25}{'EMAIL':<28}{'CIUDAD':<15}{'TELÉFONO':<12}")
         print("-" * self.ANCHO)
@@ -58,7 +54,6 @@ class MenuClientes:
 
     def crear(self):
         imprimir_titulo("CREAR NUEVO CLIENTE")
-        # Recorro la TUPLA de campos del Modelo: si el Modelo cambia, el formulario también
         datos = {}
         for campo in self._controlador.MODELO.CAMPOS:
             datos[campo] = input(f"{campo.capitalize()}: ")
@@ -122,7 +117,7 @@ class MenuClientes:
 
         cambios = {}
         for campo in self._controlador.MODELO.CAMPOS:
-            actual = getattr(cliente, campo)          # lee la PROPIEDAD
+            actual = getattr(cliente, campo)          
             nuevo = input(f"{campo.capitalize()} [{actual}]: ").strip()
             if nuevo:
                 cambios[campo] = nuevo
@@ -159,7 +154,7 @@ class MenuClientes:
         self.pausa()
 
     def salir(self):
-        self._activo = False          # cambia el estado del objeto
+        self._activo = False          
         imprimir_info("¡Hasta luego! 👋")
 
     def mostrar_menu(self):
@@ -180,7 +175,7 @@ class MenuClientes:
                 continue
 
             _texto, metodo = self._opciones[tecla]
-            metodo()          # el diccionario guarda el método: aquí se ejecuta
+            metodo()          
 
 
 class MenuEstudiantes(MenuClientes):
@@ -261,7 +256,6 @@ class MenuEstudiantes(MenuClientes):
 
 if __name__ == "__main__":
     try:
-        # DICCIONARIO tecla -> clase de menú: la vista elegida se crea y se pone a correr
         menus = {"1": MenuClientes, "2": MenuEstudiantes}
         eleccion = input("1. Clientes\n2. Estudiantes\nSeleccione un sistema: ").strip()
         menus.get(eleccion, MenuClientes)().ejecutar()

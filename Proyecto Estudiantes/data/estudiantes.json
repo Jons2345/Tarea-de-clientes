@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nombre": "Joel",
+    "apellido": "Lino",
+    "email": "jja@gmail.com",
+    "carnet": "1234",
+    "notas": {
+      "Matematicas": [
+        15.0
+      ]
+    },
+    "materias": [
+      "Matematicas"
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "Martin",
+    "apellido": "Cedeño",
+    "email": "jaja2@gmail.com",
+    "carnet": "2345",
+    "notas": {
+      "Fisica": [
+        14.0
+      ]
+    },
+    "materias": [
+      "Fisica"
+    ]
+  }
+]
